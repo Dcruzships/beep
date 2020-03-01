@@ -1,0 +1,31 @@
+{
+  "name": "beep",
+  "version": "1.0.0",
+  "engines": {
+    "node": "12.13.0",
+    "npm": "6.13.x"
+  },
+  "description": "A place to leave messages (after the beep)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dcruzships/beep.git"
+  },
+  "author": "Brandon Dcruz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dcruzships/beep/issues"
+  },
+  "homepage": "https://github.com/Dcruzships/beep#readme",
+  "devDependencies": {
+    "eslint": "^4.5.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0"
+  }
+}
