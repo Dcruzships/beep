@@ -13,20 +13,18 @@ let gridCount = 1;
 const init = () =>
 {
   // sets up sorting button to call corresponding function
-  sortButton.addEventListener('click', sortResponses);
-
-  // sets up new drink button to show the form
-  newMsgButt.addEventListener('click', showForm);
+  // not working for now :/
+  // sortButton.addEventListener('click', sortResponses);
 
   //create handlers for sending messages and viewing message groups
   const newMsg = (e) => sendPost(e, newMsgForm);
   const myMsgs = (e) => requestUpdate(e, '/myMessages');
   const allMsgs = (e) => requestUpdate(e, '/allMessages');
 
-  //attach submit event (for clicking submit or hitting enter)
-  newMsgForm.addEventListener('submit', sendMessage);
-  myMsgsButt.addEventListener('click', getMyMessages);
-  allMsgsButt.addEventListener('click', getAllMessages);
+  //attach submit event
+  newMsgForm.addEventListener('submit', newMsg);
+  myMsgsButt.addEventListener('click', myMsgs);
+  allMsgsButt.addEventListener('click', allMsgs);
 };
 
 newMsgButt.onclick = () => {
@@ -58,7 +56,7 @@ const showMsgs = (msgArray, content) =>
   //grid always starts with a row and a plus button to add new messages
   content.innerHTML += `<div class='grid'><div class='row'><div class='box'><div class='inner' id='newMsgButton'>+</div></div>`;
 
-  msgArray.forEach((msg, =>
+  msgArray.forEach(msg =>
   {
     content.innerHTML += `<div class='box'><div class='inner'>`;
 
@@ -91,25 +89,40 @@ const showMsgs = (msgArray, content) =>
 };
 
 //function to parse our response
-const parseJSON = (xhr, content) => {
-  //parse response (obj will be empty in a 204 updated)
-  const obj = JSON.parse(xhr.response);
-  console.dir(obj);
+const parseJSON = (xhr, content) =>
+{
+  if (xhr.response)
+  {
+    const obj = JSON.parse(xhr.response);
+    console.dir(`obj: ${obj}`);
 
-  //if message in response, add to screen
-  if(obj.message) {
-    const p = document.createElement('p');
-    p.textContent = `Message: ${obj.message}`;
-    content.appendChild(p);
-  }
+    //if message in response, add to screen
+    if (obj.message) {
+      const p = document.createElement('p');
+      p.textContent = `Message: ${xhr.response}`;
+      content.appendChild(p);
+    }
 
-  //if users in response, add to screen
-  if(obj.users) {
-    const userList = document.createElement('p');
-    const users = JSON.stringify(obj.users);
-    userList.textContent = users;
-    content.appendChild(userList);
-  }
+    //if it is myMsgs, add to screen
+    if (obj.myMsgs)
+    {
+
+      whatMessages = obj.myMsgs;
+
+      if (obj.myMsgs.length == 0) {
+        alert('No messages to display!');
+      } else {
+        showMsgs(obj.myMsgs, content);
+      };
+    }
+
+    // if it is allMsgs, add to screen
+    if (obj.allMsgs)
+    {
+      whatMessages = obj.allMsgs;
+      showMsgs(obj.allMsgs, content);
+    };
+  };
 };
 
 //function to handle our response

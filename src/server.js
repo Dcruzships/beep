@@ -1,73 +1,65 @@
-const http = require('http'); //pull in http module
-//url module for parsing url string
-const url = require('url'); 
-//querystring module for parsing querystrings from url
+const http = require('http');
+const url = require('url');
 const query = require('querystring');
-//pull in our custom files
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-//handle POST requests
+// used to sort through urls
+const urlStruct = {
+  GET: {
+    '/': htmlHandler.getIndex,
+    '/style.css': htmlHandler.getCSS,
+    '/myMsgs': jsonHandler.getMyMsgs,
+    '/allMsgs': jsonHandler.getAllMsgs,
+    notFound: jsonHandler.notFound,
+  },
+  HEAD: {
+    '/myMsgs': jsonHandler.getMyMsgsMeta,
+    '/allMsgs': jsonHandler.getAllMsgsMeta,
+    notFound: jsonHandler.notFoundMeta,
+  },
+};
+
+// handle POST requests
 const handlePost = (request, response, parsedUrl) => {
-  //if post is to /addUser (our only POST url)
-  if (parsedUrl.pathname === '/addUser') {
+  if (parsedUrl.pathname === '/addDrink') {
     const res = response;
 
-    //uploads come in as a byte stream that we need 
-    //to reassemble once it's all arrived
     const body = [];
-
-    //if the upload stream errors out, just throw a
-    //a bad request and send it back 
     request.on('error', (err) => {
       console.dir(err);
       res.statusCode = 400;
       res.end();
     });
 
-    //on 'data' is for each byte of data that comes in
-    //from the upload. We will add it to our byte array.
     request.on('data', (chunk) => {
-      body.push(chunk); 
+      body.push(chunk);
     });
 
-    //on end of upload stream. 
     request.on('end', () => {
-      //combine our byte array (using Buffer.concat)
-      //and convert it to a string value (in this instance)
       const bodyString = Buffer.concat(body).toString();
-      //since we are getting x-www-form-urlencoded data
-      //the format will be the same as querystrings
-      //Parse the string into an object by field name
       const bodyParams = query.parse(bodyString);
 
-      //pass to our addUser function
-      jsonHandler.addUser(request, res, bodyParams);
+      // console.dir(bodyParams);
+      jsonHandler.addDrink(request, res, bodyParams);
     });
   }
 };
 
 //handle GET requests
 const handleGet = (request, response, parsedUrl) => {
-  //route to correct method based on url
-  if (parsedUrl.pathname === '/style.css') {
-    htmlHandler.getCSS(request, response);
-  } else if (parsedUrl.pathname === '/getUsers') {
-    jsonHandler.getUsers(request, response);
+  if (urlStruct[request.method][parsedUrl.pathname]) {
+    urlStruct[request.method][parsedUrl.pathname](request, response);
   } else {
-    htmlHandler.getIndex(request, response);
+    urlStruct[request.method].notFound(request, response);
   }
 };
 
+// on request, parses through URL and either sends to post or get
 const onRequest = (request, response) => {
-  //parse url into individual parts
-  //returns an object of url parts by name
   const parsedUrl = url.parse(request.url);
-
-  //check if method was POST, otherwise assume GET 
-  //for the sake of this example
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
   } else {
@@ -75,6 +67,7 @@ const onRequest = (request, response) => {
   }
 };
 
+// creates the server
 http.createServer(onRequest).listen(port);
 
 console.log(`Listening on 127.0.0.1: ${port}`);
