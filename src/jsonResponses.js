@@ -16,17 +16,6 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-// grabs user messages from array
-const getMyMsgs = (request, response) => {
-  const responseJSON = {
-    myMsgs,
-  };
-
-  respondJSON(request, response, 200, responseJSON);
-};
-
-const getMyMsgsMeta = (request, response) => respondJSONMeta(request, response, 200);
-
 // grabs all messages
 const getAllMsgs = (request, response) => {
   const responseJSON = {
@@ -75,10 +64,10 @@ const newMsg = (request, response, body) => {
   // otherwise push new message to allMsgs
   console.dir('pushing new object');
   allMsgs.messages.push({
-    name: body.name,
-    date: "10",
-    time: "3:11",
-    message: body.message,
+    "name": body.name,
+    "date": "10",
+    "time": "3:11",
+    "message": body.message,
   });
 
   // responds to the page
@@ -104,8 +93,6 @@ const notFoundMeta = (request, response) => {
 //public exports
 module.exports = {
   newMsg,
-  getMyMsgs,
-  getMyMsgsMeta,
   getAllMsgs,
   getAllMsgsMeta,
   notFound,

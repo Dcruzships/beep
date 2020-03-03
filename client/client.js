@@ -8,6 +8,7 @@ const allMsgsButt = document.querySelector('#allMsgs');
 const sortButton = document.querySelector('#sortSelectButton');
 let whatMessages = 1;
 let gridCount = 1;
+let allMsgsArray;
 
 // initalizes page
 const init = () =>
@@ -135,13 +136,15 @@ const showMsgs = (msgArray, content) =>
   });
 
   //if the grid was not full, close it anyways
-  if(gridCount < 5)
+  if(gridCount < 4)
   {
     newHTML += `</div>`;
   }
-
-  //close the grid and content
-  newHTML += `</div></div>`;
+  else
+  {
+    //close the grid and content
+    newHTML += `</div></div>`;
+  }
 
   content.innerHTML = newHTML;
 
@@ -160,6 +163,13 @@ const parseJSON = (xhr, content) =>
     const obj = JSON.parse(xhr.response);
     console.dir(`obj: ${obj}`);
   };
+
+  //if message in response, add to screen
+  if(obj.message) {
+    const p = document.createElement('p');
+    p.textContent = `Message: ${xhr.response}`;
+    content.appendChild(p);
+  }
 };
 
 //function to handle our response
@@ -172,7 +182,7 @@ const handleResponse = (xhr) => {
       content.innerHTML = `<b>Success</b>`;
       break;
     case 201: // created
-      content.innerHTML = '<b>Create</b>';
+      content.innerHTML = '<b>Created</b>';
       break;
     case 204: // updated (no response back from server)
       content.innerHTML = '<b>Updated (No Content)</b>';
@@ -198,6 +208,9 @@ const handleResponse = (xhr) => {
 //function to send our post request
 const sendPost = (e, msgForm) =>
 {
+  // don't reload the page
+  e.preventDefault();
+
   const msgAction = newMsgForm.getAttribute('action');
   const msgMethod = newMsgForm.getAttribute('method');
 
@@ -208,14 +221,6 @@ const sendPost = (e, msgForm) =>
   // get date and time of message send
   const date = "";
   const time = "";
-
-  // save it to local messages array
-  myMsgs.messages.push({
-    name: nameField.name,
-    date: "10",
-    time: "3:11",
-    message: msgField.message,
-  });
 
   const xhr = new XMLHttpRequest();
   xhr.open(msgMethod, msgAction);
@@ -232,15 +237,20 @@ const sendPost = (e, msgForm) =>
   xhr.send(formData);
   console.dir(`form data: ${formData}`);
 
-  // don't reload the page
-  e.preventDefault();
+  // alerts the user that the message was sent and added to the wall
+  alert('Message sent!');
+
+  // save it to local messages array
+  myMsgs.messages.push({
+    "name": nameField.name,
+    "date": "10",
+    "time": "3:11",
+    "message": msgField.message,
+  });
 
   // resets the fields
   nameField.value = "";
   msgField.value = "";
-
-  // alerts the user that the message was sent and added to the wall
-  alert('Message sent!');
 
   // so we can continue
   return false;
