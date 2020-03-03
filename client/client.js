@@ -1,25 +1,71 @@
-const popup = document.querySelector("#newMsgPopup");
 const newMsgButt = document.querySelector("#newMsgButton");
+const popup = document.querySelector("#newMsgPopup");
 const closeButt = document.querySelector("#close");
 const sendMsgButt = document.querySelector("#sendMsgButton");
 const newMsgForm = document.querySelector("#newMsgForm");
 const myMsgsButt = document.querySelector('#myMsgs');
 const allMsgsButt = document.querySelector('#allMsgs');
 const sortButton = document.querySelector('#sortSelectButton');
-let whatMessages;
+let whatMessages = 1;
 let gridCount = 1;
 
 // initalizes page
 const init = () =>
 {
-  // sets up sorting button to call corresponding function
-  // not working for now :/
-  // sortButton.addEventListener('click', sortResponses);
+  // array holding all user sent messages
+  let myMsgsArray =
+  {
+    "messages": [
+      {
+        "name": "It's you!",
+        "date": "2/3/4",
+        "time": "4:15",
+        "message": "Hi you"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }, {
+        "name": "Not Brandon",
+        "date": "02/02/2020",
+        "time": "3:46PM",
+        "message": "yeah"
+      }
+    ]
+  };
+
+  let theContent = document.querySelector("#content");
 
   //create handlers for sending messages and viewing message groups
   const newMsg = (e) => sendPost(e, newMsgForm);
-  const myMsgs = (e) => requestUpdate(e, '/myMessages');
-  const allMsgs = (e) => requestUpdate(e, '/allMessages');
+  const myMsgs = (e) => showMsgs(myMsgsArray, theContent);
+  const allMsgs = (e) => requestUpdate(e, '/allMsgs');
 
   //attach submit event
   newMsgForm.addEventListener('submit', newMsg);
@@ -27,7 +73,7 @@ const init = () =>
   allMsgsButt.addEventListener('click', allMsgs);
 };
 
-newMsgButt.onclick = () => {
+newMsgButton.onclick = () => {
   popup.style.display = "block";
   // clear the content inside the modal
   newMsgForm.reset();
@@ -47,45 +93,63 @@ sendMsgButt.onclick = () => {
   popup.style.display = "none";
 };
 
+myMsgsButt.onclick = () => {
+  whatMessages = 0;
+};
+
+allMsgsButt.onclick = () => {
+  whatMessages = 1;
+};
+
 // display all messages from returned JSON
 const showMsgs = (msgArray, content) =>
 {
   //clear the Content
   content.innerHTML = "";
+  let newHTML = "";
 
   //grid always starts with a row and a plus button to add new messages
-  content.innerHTML += `<div class='grid'><div class='row'><div class='box'><div class='inner' id='newMsgButton'>+</div></div>`;
+  newHTML += `<div class='grid'><div class='row'><div class='box'><div class='inner' id='newMsgButton'>+</div></div>`;
 
-  msgArray.forEach(msg =>
+  msgArray.messages.forEach(msg =>
   {
-    content.innerHTML += `<div class='box'><div class='inner'>`;
+    newHTML += `<div class='box'><div class='inner'>`;
 
     //add date, body, and author
-    content.innerHTML += `<h2>${msg.date}, ${msg.time}</h2>`;
-    content.innerHTML += `<p>${msg.message}</p>`;
-    content.innerHTML += `<h2>From: ${msg.name}`;
+    newHTML += `<p>${msg.date}, ${msg.time}</p>`;
+    newHTML += `<p>${msg.message}</p>`;
+    newHTML += `<p>From: ${msg.name}</p>`;
 
     //close the message div
-    content.innerHTML += `</div></div>`;
+    newHTML += `</div></div>`;
 
     gridCount++;
 
     // if grid row is full, add another row
-    if(gridCount > 4)
+    if(gridCount > 5)
     {
-     content.innerHTML += `</div>`;
-     content.innerHTML += `<div class='row'>`;
+     newHTML += `</div>`;
+     newHTML += `<div class='row'>`;
+     gridCount = 0;
     }
   });
 
   //if the grid was not full, close it anyways
   if(gridCount < 5)
   {
-    content.innerHTML += `</div>`;
+    newHTML += `</div>`;
   }
 
   //close the grid and content
-  content.innerHTML += `</div></div>`;
+  newHTML += `</div></div>`;
+
+  content.innerHTML = newHTML;
+
+  document.querySelector("#newMsgButton").onclick = () => {
+    popup.style.display = "block";
+    // clear the content inside the modal
+    newMsgForm.reset();
+  };
 };
 
 //function to parse our response
@@ -95,33 +159,6 @@ const parseJSON = (xhr, content) =>
   {
     const obj = JSON.parse(xhr.response);
     console.dir(`obj: ${obj}`);
-
-    //if message in response, add to screen
-    if (obj.message) {
-      const p = document.createElement('p');
-      p.textContent = `Message: ${xhr.response}`;
-      content.appendChild(p);
-    }
-
-    //if it is myMsgs, add to screen
-    if (obj.myMsgs)
-    {
-
-      whatMessages = obj.myMsgs;
-
-      if (obj.myMsgs.length == 0) {
-        alert('No messages to display!');
-      } else {
-        showMsgs(obj.myMsgs, content);
-      };
-    }
-
-    // if it is allMsgs, add to screen
-    if (obj.allMsgs)
-    {
-      whatMessages = obj.allMsgs;
-      showMsgs(obj.allMsgs, content);
-    };
   };
 };
 
@@ -172,6 +209,14 @@ const sendPost = (e, msgForm) =>
   const date = "";
   const time = "";
 
+  // save it to local messages array
+  myMsgs.messages.push({
+    name: nameField.name,
+    date: "10",
+    time: "3:11",
+    message: msgField.message,
+  });
+
   const xhr = new XMLHttpRequest();
   xhr.open(msgMethod, msgAction);
 
@@ -181,7 +226,7 @@ const sendPost = (e, msgForm) =>
   xhr.onload = () => handleResponse(xhr);
 
   // adds values put in by user to formData object
-  const formData = `name=${nameField.value}&msg=${msgField.value}&date=${date}&time=${time}`;
+  const formData = `name=${nameField.value}&message=${msgField.value}&date=${date}&time=${time}`;
 
   // sends object
   xhr.send(formData);

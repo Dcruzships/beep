@@ -81,13 +81,14 @@ html, body {
   right: 0;
   bottom: 0;
   top: 0;
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
 }
 
 #newMsgButton {
   font-size: 5rem;
+  display: flex;
 }
 
 #newMsgButton:hover {

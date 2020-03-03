@@ -1,13 +1,33 @@
 {
   "messages": [{
     "name": "Timmy Turner",
-    "date": "",
-    "time": "",
-    "messaage": "Hey Brandon you're cool"
+    "date": "05/02/2007",
+    "time": "6:45PM",
+    "message": "Hey Brandon you're cool"
   }, {
     "name": "Thomas Jefferson",
-    "date": "",
-    "time": "",
-    "messaage": "What's good dude?"
+    "date": "02/03/2020",
+    "time": "5:40AM",
+    "message": "What's good dude?"
+  }, {
+    "name": "Franklin",
+    "date": "07/03/2004",
+    "time": "5:43PM",
+    "message": "Man this is crazy"
+  }, {
+    "name": "Dr. Doctorates",
+    "date": "02/03/2020",
+    "time": "1:00PM",
+    "message": "You are not very cool"
+  }, {
+    "name": "Henry D.",
+    "date": "04/05/2012",
+    "time": "4:50PM",
+    "message": "lmao"
+  }, {
+    "name": "Not Brandon",
+    "date": "02/02/2020",
+    "time": "3:46PM",
+    "message": "yeah"
   }]
 }

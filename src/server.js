@@ -13,6 +13,7 @@ const urlStruct = {
     '/style.css': htmlHandler.getCSS,
     '/myMsgs': jsonHandler.getMyMsgs,
     '/allMsgs': jsonHandler.getAllMsgs,
+    '/client.js': htmlHandler.getJS,
     notFound: jsonHandler.notFound,
   },
   HEAD: {
@@ -24,7 +25,7 @@ const urlStruct = {
 
 // handle POST requests
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addDrink') {
+  if (parsedUrl.pathname === '/newMsg') {
     const res = response;
 
     const body = [];
@@ -43,7 +44,7 @@ const handlePost = (request, response, parsedUrl) => {
       const bodyParams = query.parse(bodyString);
 
       // console.dir(bodyParams);
-      jsonHandler.addDrink(request, res, bodyParams);
+      jsonHandler.newMsg(request, res, bodyParams);
     });
   }
 };
